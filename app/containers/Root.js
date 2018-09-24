@@ -39,17 +39,13 @@ export default class Root extends Component<Props> {
           <nav>
             <Menu large="true">
               <Menu.Item
-                icon="cog"
+                icon="settings"
                 onClick={this.handleClick}
                 text="Control Settings"
               />
+              <Menu.Item icon="th" onClick={this.handleClick} text="Status" />
               <Menu.Item
-                icon="eye-open"
-                onClick={this.handleClick}
-                text="Status"
-              />
-              <Menu.Item
-                icon="timeline-line-chart"
+                icon="pulse"
                 onClick={this.handleClick}
                 text="Monitor"
               />
