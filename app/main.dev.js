@@ -11,7 +11,9 @@
  * @flow
  */
 import { app, BrowserWindow } from 'electron';
-import MenuBuilder from './menu';
+import { connect } from 'net';
+
+// import MenuBuilder from './menu';
 
 let mainWindow = null;
 
@@ -82,10 +84,28 @@ app.on('ready', async () => {
     }
   });
 
+  // TCP Client
+  const socketClient = connect(
+    { host: 'localhost', port: 9042 },
+    () => {
+      console.log('connected to server');
+      socketClient.write('Hello\r\n');
+    }
+  );
+
+  socketClient.on('data', data => {
+    console.log(data);
+  });
+
+  socketClient.on('end', () => {
+    console.log('server disconnected');
+  });
+
+  // Exit
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
 });
