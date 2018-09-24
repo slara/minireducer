@@ -15,7 +15,7 @@ export default class Home extends Component<Props> {
     return (
       <div className="content">
         <Card elevation={Elevation.ONE}>
-          <HTMLTable>
+          <HTMLTable interactive="true" striped="true">
             <thead>
               <tr>
                 <th style={{ width: '100%' }}>Control Parameters</th>
