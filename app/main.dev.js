@@ -86,7 +86,7 @@ app.on('ready', async () => {
 
   // TCP Client
   const socketClient = connect(
-    { host: 'localhost', port: 9042 },
+    { host: '10.0.0.3', port: 1028 },
     () => {
       console.log('connected to server');
       socketClient.write('Hello\r\n');
