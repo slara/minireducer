@@ -98,10 +98,9 @@ app.on('ready', async () => {
     },
     () => {
       console.log('connected to server');
-      socketClient.write('111SAC000\r\n');
-      socketClient.write('111MFW0\r\n');
-      socketClient.write('000SAC001\r\n');
-      socketClient.write('001GMI\r\n');
+      socketClient.write('@111SAC000\r\n');
+      socketClient.write('@111MFW0\r\n');
+      socketClient.write('@000SAC001\r\n');
     }
   );
 
