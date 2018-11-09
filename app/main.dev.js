@@ -92,7 +92,7 @@ app.on('ready', async () => {
   // TCP Client
   const socketClient = connect(
     {
-      host: '10.0.0.3',
+      host: '10.0.0.5',
       // host: 'localhost',
       port: 1028
     },
