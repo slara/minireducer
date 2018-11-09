@@ -13,7 +13,7 @@
 import { app, BrowserWindow } from 'electron';
 import { connect } from 'net';
 
-// import MenuBuilder from './menu';
+import MenuBuilder from './menu';
 
 let mainWindow = null;
 
@@ -26,6 +26,11 @@ if (
   process.env.NODE_ENV === 'development' ||
   process.env.DEBUG_PROD === 'true'
 ) {
+  require('electron-debug')();
+  const path = require('path');
+  const p = path.join(__dirname, '..', 'app', 'node_modules');
+  require('module').globalPaths.push(p);
+} else {
   require('electron-debug')();
   const path = require('path');
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -86,10 +91,17 @@ app.on('ready', async () => {
 
   // TCP Client
   const socketClient = connect(
-    { host: '10.0.0.3', port: 1028 },
+    {
+      host: '10.0.0.3',
+      // host: 'localhost',
+      port: 1028
+    },
     () => {
       console.log('connected to server');
-      socketClient.write('Hello\r\n');
+      socketClient.write('111SAC000\r\n');
+      socketClient.write('111MFW0\r\n');
+      socketClient.write('000SAC001\r\n');
+      socketClient.write('001GMI\r\n');
     }
   );
 
@@ -106,6 +118,6 @@ app.on('ready', async () => {
     mainWindow = null;
   });
 
-  // const menuBuilder = new MenuBuilder(mainWindow);
-  // menuBuilder.buildMenu();
+  const menuBuilder = new MenuBuilder(mainWindow);
+  menuBuilder.buildMenu();
 });
