@@ -1,14 +1,41 @@
 // @flow
 import React, { Component } from 'react';
 import { Card, Elevation, HTMLTable } from '@blueprintjs/core';
-
-type Props = {};
+import { connect } from 'net';
 
 export default class Home extends Component<Props> {
-  props: Props;
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-  handleClick = e => {
-    console.log('click!', e.currentTarget);
+  componentDidMount() {
+    this.setState({
+      socket: connect(
+        {
+          // host: '10.0.0.5',
+          host: 'localhost',
+          port: 1028
+        },
+        () => this.initDevice()
+      )
+    });
+  }
+
+  initDevice() {
+    const { socket } = this.state;
+    console.log('connected to server');
+
+    socket.write('@111SAC000\r\n');
+    socket.write('@111MFW0\r\n');
+    socket.write('@000SAC001\r\n');
+    socket.write('@001GMI\r\n');
+  }
+
+  handleClick = data => e => {
+    const { socket } = this.state;
+    socket.write(data.toString());
+    console.log('click!', data, e);
   };
 
   render() {
@@ -24,7 +51,7 @@ export default class Home extends Component<Props> {
               </tr>
             </thead>
             <tbody>
-              <tr onClick={this.handleClick}>
+              <tr onClick={this.handleClick(120000)}>
                 <td>Rx Carrier Frequency MOD [Hz]</td>
                 <td>1200000000</td>
                 <td>47 86 BC 00</td>

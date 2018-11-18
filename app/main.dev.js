@@ -11,7 +11,6 @@
  * @flow
  */
 import { app, BrowserWindow } from 'electron';
-import { connect } from 'net';
 
 import MenuBuilder from './menu';
 
@@ -87,30 +86,6 @@ app.on('ready', async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-  });
-
-  // TCP Client
-  const socketClient = connect(
-    {
-      host: '10.0.0.5',
-      // host: 'localhost',
-      port: 1028
-    },
-    () => {
-      console.log('connected to server');
-      socketClient.write('@111SAC000\r\n');
-      socketClient.write('@111MFW0\r\n');
-      socketClient.write('@000SAC001\r\n');
-      socketClient.write('@001GMI\r\n');
-    }
-  );
-
-  socketClient.on('data', data => {
-    console.log(data);
-  });
-
-  socketClient.on('end', () => {
-    console.log('server disconnected');
   });
 
   // Exit
