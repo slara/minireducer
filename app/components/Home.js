@@ -2,11 +2,13 @@
 import React, { Component } from 'react';
 import { Card, Elevation, HTMLTable } from '@blueprintjs/core';
 import { connect } from 'net';
+import commands from '../constants/commands.json';
 
 export default class Home extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {};
+    this.commands = commands;
   }
 
   componentDidMount() {
@@ -32,10 +34,10 @@ export default class Home extends Component<Props> {
     socket.write('@001GMI\r\n');
   }
 
-  handleClick = data => e => {
+  handleClick = data => {
     const { socket } = this.state;
     socket.write(data.toString());
-    console.log('click!', data, e);
+    console.log('click!', data);
   };
 
   render() {
@@ -51,46 +53,13 @@ export default class Home extends Component<Props> {
               </tr>
             </thead>
             <tbody>
-              <tr onClick={this.handleClick(120000)}>
-                <td>Rx Carrier Frequency MOD [Hz]</td>
-                <td>1200000000</td>
-                <td>47 86 BC 00</td>
-              </tr>
-              <tr onClick={this.handleClick}>
-                <td>Rx BB Gain MOD [dB]</td>
-                <td>15</td>
-                <td>XF</td>
-              </tr>
-              <tr onClick={this.handleClick}>
-                <td>Rx RF Gain MOD [dB]</td>
-                <td>619</td>
-                <td>0B 6B</td>
-              </tr>
-              <tr onClick={this.handleClick}>
-                <td>Rx Carrier Frequency SAT [Hz]</td>
-                <td>1305000000</td>
-                <td>4D C8 B8 40</td>
-              </tr>
-              <tr onClick={this.handleClick}>
-                <td>Rx BB Gain SAT [dB]</td>
-                <td>15</td>
-                <td>FX</td>
-              </tr>
-              <tr onClick={this.handleClick}>
-                <td>Rx RF Gain SAT [dB]</td>
-                <td>3344</td>
-                <td>0D 10</td>
-              </tr>
-              <tr onClick={this.handleClick}>
-                <td>Tx Carrier Frequency DEM [Hz]</td>
-                <td>1305000000</td>
-                <td>4D C8 B8 40</td>
-              </tr>
-              <tr onClick={this.handleClick}>
-                <td>Tx Gain [dB]</td>
-                <td>10</td>
-                <td>0A</td>
-              </tr>
+              {this.commands.map(command => (
+                <tr key={command.name} onClick={this.handleClick(command)}>
+                  <td>{command.name}</td>
+                  <td>{command.value}</td>
+                  <td>47 86 BC 00</td>
+                </tr>
+              ))}
             </tbody>
           </HTMLTable>
         </Card>

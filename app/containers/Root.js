@@ -12,8 +12,9 @@ type Props = {
 };
 
 export default class Root extends Component<Props> {
-  handleClick = () => {
-    console.log('Menu click!');
+  handleClick = r => {
+    const { history } = this.props;
+    console.log('Menu click!', history.push(r));
   };
 
   render() {
@@ -40,14 +41,17 @@ export default class Root extends Component<Props> {
             <Menu large="true">
               <Menu.Item
                 icon="settings"
-                onClick={this.handleClick}
+                onClick={() => {
+                  this.handleClick('/');
+                }}
                 text="Control Settings"
               />
-              <Menu.Item icon="th" onClick={this.handleClick} text="Status" />
               <Menu.Item
-                icon="pulse"
-                onClick={this.handleClick}
-                text="Monitor"
+                icon="th"
+                onClick={() => {
+                  this.handleClick('/status');
+                }}
+                text="Status"
               />
             </Menu>
           </nav>
