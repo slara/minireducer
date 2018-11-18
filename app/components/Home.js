@@ -22,11 +22,21 @@ export default class Home extends Component<Props> {
         () => this.initDevice()
       )
     });
+    console.log('componentDidMount');
+  }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdate');
+  }
+
+  componentWillUnmount() {
+    const { socket } = this.state;
+    socket.destroy();
   }
 
   initDevice() {
     const { socket } = this.state;
-    console.log('connected to server');
+    console.log('connected to server', socket);
 
     socket.write('@111SAC000\r\n');
     socket.write('@111MFW0\r\n');
@@ -34,11 +44,11 @@ export default class Home extends Component<Props> {
     socket.write('@001GMI\r\n');
   }
 
-  handleClick = data => {
+  handleClick(command) {
     const { socket } = this.state;
-    socket.write(data.toString());
-    console.log('click!', data);
-  };
+    socket.write(`${command.value.toString()}\r\n`);
+    console.log('click!', socket);
+  }
 
   render() {
     return (
@@ -54,7 +64,10 @@ export default class Home extends Component<Props> {
             </thead>
             <tbody>
               {this.commands.map(command => (
-                <tr key={command.name} onClick={this.handleClick(command)}>
+                <tr
+                  key={command.name}
+                  onClick={() => this.handleClick(command)}
+                >
                   <td>{command.name}</td>
                   <td>{command.value}</td>
                   <td>47 86 BC 00</td>
