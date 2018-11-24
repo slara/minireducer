@@ -1,14 +1,29 @@
 // @flow
 import React, { Component } from 'react';
-import { Card, Elevation, HTMLTable } from '@blueprintjs/core';
+
+import {
+  Label,
+  Button,
+  Intent,
+  Dialog,
+  Classes,
+  Card,
+  Elevation,
+  HTMLTable,
+  FormGroup,
+  NumericInput
+} from '@blueprintjs/core';
+
 import { connect } from 'net';
 import commands from '../constants/commands.json';
 
 export default class Home extends Component<Props> {
   constructor(props) {
     super(props);
-    this.state = {};
-    this.commands = commands;
+    this.state = {
+      dialogstate: false,
+      selectedCommand: { value: 0, name: '' }
+    };
   }
 
   componentDidMount() {
@@ -23,10 +38,6 @@ export default class Home extends Component<Props> {
       )
     });
     console.log('componentDidMount');
-  }
-
-  componentDidUpdate() {
-    console.log('componentDidUpdate');
   }
 
   componentWillUnmount() {
@@ -45,12 +56,47 @@ export default class Home extends Component<Props> {
   }
 
   handleClick(command) {
-    const { socket } = this.state;
-    socket.write(`${command.value.toString()}\r\n`);
-    console.log('click!', socket);
+    this.setState({
+      dialogstate: true,
+      selectedCommand: command
+    });
   }
 
+  sendCommand() {
+    const { selectedCommand, value, socket } = this.state;
+    socket.write(`${value.toString()}\r\n`);
+
+    commands.forEach((command, i) => {
+      if (command.name === selectedCommand.name) {
+        commands[i] = selectedCommand;
+      }
+    });
+
+    this.setState({
+      dialogstate: false,
+      selectedCommand: { value }
+    });
+  }
+
+  handleClose() {
+    this.setState({ dialogstate: false });
+  }
+
+  onInputChange = (_valueAsNumber, valueAsString) => {
+    console.log(valueAsString);
+    const { selectedCommand } = this.state;
+    this.setState({
+      value: valueAsString,
+      selectedCommand: {
+        name: selectedCommand.name,
+        value: valueAsString
+      }
+    });
+  };
+
   render() {
+    const { dialogstate, selectedCommand } = this.state;
+
     return (
       <div className="content">
         <Card elevation={Elevation.ONE}>
@@ -63,18 +109,48 @@ export default class Home extends Component<Props> {
               </tr>
             </thead>
             <tbody>
-              {this.commands.map(command => (
+              {commands.map(command => (
                 <tr
                   key={command.name}
                   onClick={() => this.handleClick(command)}
                 >
                   <td>{command.name}</td>
                   <td>{command.value}</td>
-                  <td>47 86 BC 00</td>
+                  <td>{(+command.value).toString(16).toUpperCase()}</td>
                 </tr>
               ))}
             </tbody>
           </HTMLTable>
+          <Dialog
+            isOpen={dialogstate}
+            icon="info-sign"
+            onClose={() => this.handleClose()}
+            title="Command configuration"
+          >
+            <div className={Classes.DIALOG_BODY}>
+              <FormGroup label={selectedCommand.name} labelFor="text-input">
+                <NumericInput
+                  value={selectedCommand.value}
+                  onValueChange={this.onInputChange}
+                  large
+                />
+              </FormGroup>
+              <Label>
+                Hex: {(+selectedCommand.value).toString(16).toUpperCase()}
+              </Label>
+            </div>
+            <div className={Classes.DIALOG_FOOTER}>
+              <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+                <Button onClick={() => this.handleClose()}>Close</Button>
+                <Button
+                  intent={Intent.PRIMARY}
+                  onClick={() => this.sendCommand()}
+                >
+                  Update Configuration
+                </Button>
+              </div>
+            </div>
+          </Dialog>
         </Card>
       </div>
     );
