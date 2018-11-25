@@ -38,8 +38,7 @@ export default class Home extends Component<Props> {
     this.setState({
       socket: connect(
         {
-          // host: '10.0.0.5',
-          host: 'localhost',
+          host: '10.0.0.5',
           port: 1028
         },
         () => this.initDevice()
