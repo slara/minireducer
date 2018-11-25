@@ -11,11 +11,19 @@ import {
   Elevation,
   HTMLTable,
   FormGroup,
+  Position,
+  Toaster,
   NumericInput
 } from '@blueprintjs/core';
 
 import { connect } from 'net';
 import commands from '../constants/commands.json';
+
+/** Singleton toaster instance. Create separate instances for different options. */
+export const AppToaster = Toaster.create({
+  className: 'recipe-toaster',
+  position: Position.BOTTOM
+});
 
 export default class Home extends Component<Props> {
   constructor(props) {
@@ -55,26 +63,20 @@ export default class Home extends Component<Props> {
     socket.write('@001GMI\r\n');
   }
 
-  handleClick(command) {
-    this.setState({
-      dialogstate: true,
-      selectedCommand: command
-    });
-  }
-
   sendCommand() {
-    const { selectedCommand, value, socket } = this.state;
-    socket.write(`${value.toString()}\r\n`);
-
+    const { socket, selectedCommand } = this.state;
     commands.forEach((command, i) => {
       if (command.name === selectedCommand.name) {
         commands[i] = selectedCommand;
       }
     });
-
     this.setState({
-      dialogstate: false,
-      selectedCommand: { value }
+      dialogstate: false
+    });
+    const strcommands = this.makeCommands();
+    strcommands.forEach(strcommand => {
+      socket.write(strcommand.text);
+      AppToaster.show({ message: strcommand.text });
     });
   }
 
@@ -82,13 +84,37 @@ export default class Home extends Component<Props> {
     this.setState({ dialogstate: false });
   }
 
+  handleClick(command) {
+    this.setState({
+      dialogstate: true,
+      selectedCommand: command
+    });
+  }
+
+  makeCommands() {
+    const { selectedCommand } = this.state;
+    const val = (+selectedCommand.value).toString(16).toUpperCase();
+    const chunks = val.match(/.{1,2}/g).reverse();
+    const out = [];
+    for (let index = 0; index < val.length / 2; index += 1) {
+      let chunk = '';
+      if (selectedCommand.nibble === 'lo') {
+        chunk = chunks[index].padStart(2, '0');
+      } else {
+        chunk = chunks[index].padEnd(2, '0');
+      }
+      const reg = (selectedCommand.reg + index).toString().padStart(2, '0');
+      out.push({ text: `@001SRG${reg}${chunk}\r\n` });
+    }
+    return out;
+  }
+
   onInputChange = (_valueAsNumber, valueAsString) => {
-    console.log(valueAsString);
     const { selectedCommand } = this.state;
     this.setState({
-      value: valueAsString,
       selectedCommand: {
         name: selectedCommand.name,
+        reg: selectedCommand.reg,
         value: valueAsString
       }
     });
@@ -105,7 +131,6 @@ export default class Home extends Component<Props> {
               <tr>
                 <th style={{ width: '100%' }}>Control Parameters</th>
                 <th>Decimal Value</th>
-                <th>HEX Value</th>
               </tr>
             </thead>
             <tbody>
@@ -116,7 +141,6 @@ export default class Home extends Component<Props> {
                 >
                   <td>{command.name}</td>
                   <td>{command.value}</td>
-                  <td>{(+command.value).toString(16).toUpperCase()}</td>
                 </tr>
               ))}
             </tbody>
@@ -132,7 +156,6 @@ export default class Home extends Component<Props> {
                 <NumericInput
                   value={selectedCommand.value}
                   onValueChange={this.onInputChange}
-                  large
                 />
               </FormGroup>
               <Label>

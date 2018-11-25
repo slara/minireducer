@@ -1,34 +1,50 @@
 [
   {
     "name": "Rx Carrier Frequency MOD [Hz]",
-    "value": 1200000000
+    "value": 1200000000,
+    "reg": 0,
+    "nibble": "low"
   },
   {
     "name": "Rx BB Gain MOD [dB]",
-    "value": 15
+    "value": 15,
+    "reg": 35,
+    "nibble": "low"
   },
   {
     "name": "Rx RF Gain MOD [dB]",
-    "value": 619
+    "value": 619,
+    "reg": 49,
+    "nibble": "low"
   },
   {
     "name": "Rx Carrier Frequency SAT [Hz]",
-    "value": 1305000000
+    "value": 1305000000,
+    "reg": 7,
+    "nibble": "low"
   },
   {
     "name": "Rx BB Gain SAT [dB]",
-    "value": 15
+    "value": 15,
+    "reg": 35,
+    "nibble": "hi"
   },
   {
     "name": "Rx RF Gain SAT [dB]",
-    "value": 3344
+    "value": 3344,
+    "reg": 51,
+    "nibble": "low"
   },
   {
     "name": "Tx Carrier Frequency DEM [Hz]",
-    "value": 1305000000
+    "value": 1305000000,
+    "reg": 7,
+    "nibble": "low"
   },
   {
     "name": "Tx Gain [dB]",
-    "value": 10
+    "value": 10,
+    "reg": 36,
+    "nibble": "low"
   }
 ]
